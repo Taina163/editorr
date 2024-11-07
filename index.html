@@ -151,6 +151,37 @@
             background-color: #0056b3; /* Azul escuro no hover */
             transform: scale(1.05); /* Efeito de leve aumento no hover */
         }
+
+        /* Alinhamento e recuo */
+        .alignment-container {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .alignment-container button {
+            padding: 10px 15px;
+            font-size: 14px;
+            background-color: #004b6f;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .alignment-container button:hover {
+            background-color: #003b57;
+        }
+
+        .indentation-container input {
+            padding: 10px;
+            font-size: 14px;
+            border-radius: 8px;
+            border: 1px solid #004b6f;
+        }
+
     </style>
 </head>
 <body>
@@ -191,9 +222,21 @@
             <button onclick="clearText()"><i class="fas fa-eraser"></i></button> <!-- Limpar -->
         </div>
 
+        <!-- Alinhamento e recuo -->
+        <div class="alignment-container">
+            <button onclick="alignText('left')"><i class="fas fa-align-left"></i></button>
+            <button onclick="alignText('center')"><i class="fas fa-align-center"></i></button>
+            <button onclick="alignText('right')"><i class="fas fa-align-right"></i></button>
+            <button onclick="alignText('justify')"><i class="fas fa-align-justify"></i></button>
+            <div class="indentation-container">
+                <input type="number" id="indentationInput" value="1" onchange="setIndentation()" step="0.5" min="0">
+                <label for="indentationInput">Recuo (em cm)</label>
+            </div>
+        </div>
+
         <!-- Área de edição -->
         <div class="editor-wrapper">
-            <textarea id="editor" placeholder="Digite seu texto aqui..."></textarea>
+            <textarea id="editor" placeholder="Digite seu texto aqui..." oninput="updatePreview()"></textarea>
             <button class="copy-button" onclick="copyText()">Copiar Texto</button>
         </div>
 
@@ -274,6 +317,43 @@
             editor.select();  // Seleciona o texto da caixa de texto
             document.execCommand('copy');  // Copia o texto selecionado
             alert('Texto copiado para a área de transferência!');
+        }
+
+        // Funções para alinhar texto
+        function alignText(alignment) {
+            const editor = document.getElementById('editor');
+            const start = editor.selectionStart;
+            const end = editor.selectionEnd;
+            const selectedText = editor.value.substring(start, end);
+
+            const alignedText = `<div style="text-align:${alignment};">${selectedText}</div>`;
+            if (selectedText) {
+                editor.value = editor.value.substring(0, start) + alignedText + editor.value.substring(end);
+            } else {
+                editor.value += alignedText;
+            }
+
+            editor.focus();
+            updatePreview();
+        }
+
+        // Função para definir o recuo do texto
+        function setIndentation() {
+            const indentation = document.getElementById('indentationInput').value;
+            const editor = document.getElementById('editor');
+            const start = editor.selectionStart;
+            const end = editor.selectionEnd;
+            const selectedText = editor.value.substring(start, end);
+
+            const indentedText = `<div style="padding-left:${indentation}cm;">${selectedText}</div>`;
+            if (selectedText) {
+                editor.value = editor.value.substring(0, start) + indentedText + editor.value.substring(end);
+            } else {
+                editor.value += indentedText;
+            }
+
+            editor.focus();
+            updatePreview();
         }
     </script>
 
