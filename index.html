@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editor de Texto para HTML</title>
+    <!-- Link para FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* Estilo geral */
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #004b6f; /* Cor de fundo alterada para #004b6f */
+            margin: 0;
+            padding: 0;
+            color: white; /* Cor do texto ajustada para branco devido ao fundo escuro */
+        }
+
+        /* Estilos para a logo dentro do editor */
+        .logo-container {
+            position: absolute;
+            top: 10px;
+            right: 10px; /* Colocando a logo no canto superior direito */
+            z-index: 10; /* Garante que a logo fique acima do conteúdo do editor */
+        }
+
+        .logo {
+            width: 120px; /* Aumentando o tamanho da logo */
+            height: 120px; /* Aumentando o tamanho da logo */
+            object-fit: contain; /* Mantém a proporção da logo */
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            position: relative; /* Necessário para o posicionamento da logo dentro da caixa */
+        }
+
+        h1 {
+            text-align: center;
+            color: #004b6f; /* Título com cor azul escuro */
+            margin-bottom: 30px;
+        }
+
+        /* Barra de ferramentas (botões) */
+        .toolbar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 25px;
+            justify-content: center;
+        }
+
+        button, select, input[type="color"] {
+            padding: 12px;
+            font-size: 16px;
+            background-color: #004b6f; /* Cor de fundo dos botões */
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            display: inline-block;
+        }
+
+        button:hover, select:hover, input[type="color"]:hover {
+            background-color: #003b57; /* Tom mais escuro para o hover */
+        }
+
+        /* Caixa de texto de edição */
+        .editor-wrapper {
+            position: relative; /* Necessário para o posicionamento da logo */
+        }
+
+        textarea {
+            width: 100%;
+            height: 300px;
+            padding: 15px;
+            font-size: 16px;
+            border-radius: 8px;
+            border: 2px solid #004b6f;
+            margin-bottom: 30px;
+            background-color: #f9f9f9;
+            color: black; /* Cor do texto ajustada para preto */
+            resize: none;
+            box-sizing: border-box;
+            position: relative;
+        }
+
+        /* Caixa de pré-visualização */
+        .preview-container {
+            margin-top: 30px;
+            background-color: #f9f9f9; /* Cor de fundo igual ao do textarea */
+            padding: 20px;
+            border-radius: 8px;
+            border: 2px solid #004b6f; /* Borda igual ao do textarea */
+            color: black; /* Cor do texto na pré-visualização igual ao do textarea */
+            display: none; /* Inicialmente oculta */
+        }
+
+        .output-header {
+            font-size: 22px;
+            margin-bottom: 15px;
+            color: #004b6f;
+            text-align: center;
+        }
+
+        /* Exibição do código HTML */
+        #htmlOutput {
+            margin-top: 20px;
+            background-color: #f7f7f7;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            font-family: 'Courier New', Courier, monospace;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+        }
+
+        .footer a {
+            color: #004b6f;
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Novo estilo para o botão de copiar com cor azul */
+        .copy-button {
+            padding: 12px 18px;
+            background-color: #007BFF; /* Azul moderno */
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        .copy-button:hover {
+            background-color: #0056b3; /* Azul escuro no hover */
+            transform: scale(1.05); /* Efeito de leve aumento no hover */
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- Logo dentro do editor -->
+        <div class="logo-container">
+            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSSKXDVo-XKlkR3oIE2AOB3ReEz2y_KskI0oQ&s" alt="Logo" class="logo">
+        </div>
+
+        <h1>Editor de Texto para HTML</h1>
+
+        <!-- Barra de ferramentas -->
+        <div class="toolbar">
+            <button onclick="wrapText('<b>', '</b>')"><i class="fas fa-bold"></i></button> <!-- Negrito -->
+            <button onclick="wrapText('<i>', '</i>')"><i class="fas fa-italic"></i></button> <!-- Itálico -->
+            <button onclick="wrapText('<u>', '</u>')"><i class="fas fa-underline"></i></button> <!-- Sublinhado -->
+            <button onclick="wrapText('<h1>', '</h1>')"><i class="fas fa-heading"></i></button> <!-- Título 1 -->
+            <button onclick="wrapText('<h2>', '</h2>')"><i class="fas fa-heading"></i></button> <!-- Título 2 -->
+            <button onclick="wrapText('<ul><li>', '</li></ul>')"><i class="fas fa-list-ul"></i></button> <!-- Lista Não Ordenada -->
+            <button onclick="wrapText('<ol><li>', '</li></ol>')"><i class="fas fa-list-ol"></i></button> <!-- Lista Ordenada -->
+            <button onclick="insertLink()"><i class="fas fa-link"></i></button> <!-- Link -->
+            <button onclick="wrapText('<p>', '</p>')"><i class="fas fa-paragraph"></i></button> <!-- Parágrafo -->
+            <input type="color" id="textColor" onchange="changeColor()" title="Cor do Texto">
+            <select onchange="changeFontSize(this)">
+                <option value="16px">Fonte 16px</option>
+                <option value="18px">Fonte 18px</option>
+                <option value="20px">Fonte 20px</option>
+                <option value="22px">Fonte 22px</option>
+            </select>
+            <select onchange="changeFontFamily(this)">
+                <option value="Arial, sans-serif">Arial</option>
+                <option value="Times New Roman, serif">Times New Roman</option>
+                <option value="Courier New, monospace">Courier New</option>
+                <option value="Verdana, sans-serif">Verdana</option>
+                <option value="Georgia, serif">Georgia</option>
+            </select>
+            <button onclick="clearText()"><i class="fas fa-eraser"></i></button> <!-- Limpar -->
+        </div>
+
+        <!-- Área de edição -->
+        <div class="editor-wrapper">
+            <textarea id="editor" placeholder="Digite seu texto aqui..."></textarea>
+            <button class="copy-button" onclick="copyText()">Copiar Texto</button>
+        </div>
+
+        <!-- Pré-visualização do conteúdo -->
+        <div class="preview-container" id="outputPreview">
+            <div class="output-header">Pré-visualização</div>
+            <div id="previewContent"></div>
+        </div>
+
+        <!-- Exibição do código HTML -->
+        <div id="htmlOutput"></div>
+    </div>
+
+    <script>
+        // Função para aplicar tags de formatação (negrito, itálico, etc.)
+        function wrapText(openTag, closeTag) {
+            const editor = document.getElementById('editor');
+            const start = editor.selectionStart;
+            const end = editor.selectionEnd;
+            const selectedText = editor.value.substring(start, end);
+
+            // Se houver texto selecionado, aplicamos a tag, senão adicionamos a tag vazia
+            if (selectedText) {
+                editor.value = editor.value.substring(0, start) + openTag + selectedText + closeTag + editor.value.substring(end);
+            } else {
+                editor.value += openTag + closeTag; // Insere as tags vazias no final
+            }
+
+            editor.focus();
+            updatePreview(); // Atualiza a pré-visualização ao aplicar a tag
+        }
+
+        // Função para inserir um link
+        function insertLink() {
+            const url = prompt("Digite a URL do link:");
+            if (url) {
+                wrapText('<a href="' + url + '" target="_blank">', '</a>');
+            }
+        }
+
+        // Função para mudar a cor do texto
+        function changeColor() {
+            const color = document.getElementById('textColor').value;
+            wrapText('<span style="color:' + color + ';">', '</span>');
+        }
+
+        // Função para mudar o tamanho da fonte
+        function changeFontSize(select) {
+            const fontSize = select.value;
+            wrapText('<span style="font-size:' + fontSize + ';">', '</span>');
+        }
+
+        // Função para mudar a família da fonte
+        function changeFontFamily(select) {
+            const fontFamily = select.value;
+            wrapText('<span style="font-family:' + fontFamily + ';">', '</span>');
+        }
+
+        // Função para limpar a caixa de texto
+        function clearText() {
+            document.getElementById('editor').value = '';
+            document.getElementById('previewContent').innerHTML = '';
+            document.getElementById('htmlOutput').textContent = '';
+            document.getElementById('outputPreview').style.display = 'none'; // Ocultar a pré-visualização ao limpar
+        }
+
+        // Função para atualizar a pré-visualização do conteúdo
+        function updatePreview() {
+            const text = document.getElementById('editor').value;
+            const previewContent = document.getElementById('previewContent');
+            previewContent.innerHTML = text.replace(/\n/g, '<br>'); // Adiciona <br> para quebras de linha
+            document.getElementById('outputPreview').style.display = 'block'; // Mostrar a pré-visualização
+        }
+
+        // Função para copiar o conteúdo da primeira caixa de texto (editor)
+        function copyText() {
+            const editor = document.getElementById('editor');
+            editor.select();  // Seleciona o texto da caixa de texto
+            document.execCommand('copy');  // Copia o texto selecionado
+            alert('Texto copiado para a área de transferência!');
+        }
+    </script>
+
+</body>
+</html>
