@@ -52,18 +52,18 @@
         .toolbar {
             display: flex;
             justify-content: center;
-            gap: 12px;
+            gap: 8px; /* Diminui o espaço entre os botões */
             margin-bottom: 20px;
         }
 
         .toolbar button {
-            padding: 12px 18px;
+            padding: 8px 12px; /* Diminui o tamanho do botão */
             background-color: #4C9FED; /* Azul suave */
             color: white;
             border: none;
             border-radius: 5px;
             cursor: pointer;
-            font-size: 16px;
+            font-size: 14px; /* Fonte menor */
             transition: background-color 0.3s, transform 0.2s;
         }
 
@@ -111,8 +111,8 @@
         }
 
         .footer button {
-            padding: 12px 25px;
-            font-size: 16px;
+            padding: 10px 20px;
+            font-size: 14px;
             background-color: #28a745; /* Verde suave */
             color: white;
             border: none;
@@ -132,8 +132,8 @@
             border: 1px solid #ccc;
             border-radius: 5px;
             cursor: pointer;
-            padding: 10px 15px;
-            font-size: 14px;
+            padding: 8px 12px;
+            font-size: 12px;
             transition: background-color 0.3s, transform 0.2s;
         }
 
@@ -156,12 +156,12 @@
         .indent-container button {
             background-color: #f5f7fa;
             border: 1px solid #ddd;
-            padding: 10px;
-            font-size: 18px;
+            padding: 8px;
+            font-size: 14px;
             cursor: pointer;
             border-radius: 50%;
-            width: 36px;
-            height: 36px;
+            width: 30px;
+            height: 30px;
             transition: background-color 0.3s, transform 0.2s;
         }
 
@@ -172,7 +172,7 @@
         }
 
         .indent-container span {
-            font-size: 16px;
+            font-size: 14px;
         }
 
     </style>
@@ -194,6 +194,8 @@
             <button onclick="applyTag('link')"><i class="fas fa-link"></i> Link</button>
             <button onclick="applyTag('center')"><i class="fas fa-align-center"></i> Centralizar</button>
             <button onclick="applyTag('justify')"><i class="fas fa-align-justify"></i> Justificar</button>
+            <!-- Botão para aplicar a tag <p> -->
+            <button onclick="applyTag('p')"><i class="fas fa-paragraph"></i> Parágrafo</button>
         </div>
 
         <!-- Cores -->
@@ -237,10 +239,17 @@
 
         function adjustIndent(amount) {
             currentIndent += amount;
-            currentIndent = Math.max(currentIndent, 0);  // Impede que o recuo seja negativo
-            document.getElementById("indentValue").textContent = `${currentIndent}px`;
+            currentIndent = Math.max(currentIndent, 0); // Previne recuo negativo
+            document.getElementById("indentValue").textContent = currentIndent + 'px';
+            document.getElementById("inputText").style.textIndent = currentIndent + 'px';
+        }
 
-            // Atualiza a área de pré-visualização com o novo recuo
+        // Função para adicionar o texto de Regulamento
+        function insertRegulamento() {
+            let inputText = document.getElementById('inputText');
+            let currentText = inputText.value;
+            let newText = currentText + '\n\n[REGULAMENTO]\nAqui vai o texto do regulamento...';
+            inputText.value = newText;
             updatePreview();
         }
 
@@ -278,6 +287,9 @@
                 case "justify":
                     newText = `<p style="text-align: justify;">${selectedText}</p>`;
                     break;
+                case "p":
+                    newText = `<p>${selectedText}</p>`;
+                    break;
             }
 
             var content = textArea.value;
@@ -308,8 +320,7 @@
             var text = document.getElementById("inputText").value;
             var previewArea = document.getElementById("previewArea");
 
-            // Aplica o recuo na visualização
-            previewArea.innerHTML = `<div style="text-indent: ${currentIndent}px;">${text.replace(/\n/g, "<br>")}</div>`;
+            previewArea.innerHTML = `<div style="text-indent: 0px;">${text.replace(/\n/g, "<br>")}</div>`;
         }
 
         // Função para copiar o texto
@@ -321,46 +332,6 @@
             window.getSelection().addRange(range);
             document.execCommand("copy");
             alert("Texto copiado para a área de transferência!");
-        }
-
-        // Função para inserir o conteúdo do Regulamento
-        function insertRegulamento() {
-            var textArea = document.getElementById("inputText");
-            var regulamentoText = `<title><b>PORTARIA NORMATIVA   (SIGLA DA UNIDADE DE ENSINO) /UFSM N° 0XX, DE XX DE XXXXX DE 202X</b></title>
-
-<div align="center"><img src="https://www.ufsm.br/pro-reitorias/proplan/wp-content/uploads/sites/344/2019/09/brasao-da-republica-do-brasil-logo.png" alt="Brasão República Federativa do Brasil" width="6%" height="6%"></div>  <h1><font color="blue"><font size="5"><div align="center">MINISTÉRIO DA EDUCAÇÃO</div></font></font></H1>
-<br>
-<b><font color="0000blue"><div align="center">UNIVERSIDADE FEDERAL DE SANTA MARIA</div></font></b>
-
-<br>
-<b><font color="0000blue"><div align="center">** CENTRO DE  (NOME DO CENTRO)</div></font></b>
-<p><div align="center"><b><a href=AQUI POR O LINK DO PORTAL DE DOCUMENTOS target="_blank"><font color="blue"></font></a>PORTARIA NORMATIVA  (SIGLA DA UNIDADE DE ENSINO) /UFSM N° 0XX, DE XX DE XXXXX DE 202X</font></a></b></div>
-<br>
-
-<p><div align="justify"><font color="800000"><ul><ul><ul><ul><ul><ul><ul><ul><ul><ul><ul><ul><ul><ul><ul><ul><ul><ul><ul><ul>Aprova o Regulamento do  (Nome do PPG (SIGLA DO PPG)) vinculado à(ao)  (Nome da Unidade de Ensino)  no âmbito da Universidade Federal de Santa Maria (UFSM).</font></div></ul>
-
-<br><div align="justify"><font color="black">
-<p> O(A) DIRETOR(A) DO(A) (NOME DA UNIDADE DE ENSINO) , no uso de suas atribuições legais que lhe confere o <a href="https://www.ufsm.br/pro-reitorias/proplan/regimento-geral-da-ufsm-com-alteracoes-compiladas-pela-resolucao-n-016-2019/" target="_blank"><font color="blue"><u>Regimento Geral da UFSM</u></font></a>, disposto na <a href="https://www.ufsm.br/pro-reitorias/proplan/resolucao-n-006-2011/" target="_blank"><font color="blue"><u>Resolução UFSM n° 006, de 28 de abril de 2011</u></font></a>, atualizado pela <a href="https://www.ufsm.br/app/uploads/sites/399/2019/07/RES_GR_2019_016.pdf" target="_blank"><font color="blue"><u>Resolução UFSM n° 016, de 02 de julho de 2019</u></font></a>,tendo em vista as Resoluções <a href="https://www.ufsm.br/pro-reitorias/proplan/resolucao-ufsm-n-139-2023" target="_blank"><font color="blue"><u>UFSM n° 139, de 29 de agosto de 2023</u></font></a>, <a href="https://www.ufsm.br/pro-reitorias/proplan/resolucao-ufsm-n-152-2024" target="_blank"><font color="blue"><u>UFSM n° 152, de 27 de março de 2024</u></font></a>, e o que consta no Processo n° <a href=  (INCLUIR O LINK DO PROCESSO) ><font color="blue"><u> (INCLUIR O NÚMERO DO PROCESSO) </u></font></a>, resolve:</div></p>
-<br>
-<p><div align="justify">Art. 1°  Aprovar o Regulamento do  (Nome do PPG (SIGLA DO PPG)) , vinculado à(ao)  (nome da unidade de ensino ), no âmbito da Universidade Federal de Santa Maria (UFSM).</p>
-
-<p><div align="justify">Parágrafo único. O Regulamento do  (nome do PPG (SIGLA DO PPG)) se constitui como anexo desta Portaria Normativa.</div></p>
-
-<p><div align="justify">Art. 2°  A inobservância ao disposto nesta Portaria Normativa não constitui escusa válida para o descumprimento da norma nem resulta em sua invalidade.</p>
-
-<p><div align="justify">Art. 3°  Esta Portaria Normativa entra em vigor na data de sua assinatura, de acordo com o que prevê o parágrafo 2° do artigo 16 do <a href="https://www.planalto.gov.br/ccivil_03/_ato2023-2026/2024/decreto/d12002.htm" target="_blank"><font color="blue"><u>Decreto n° 12.002, de 22 de abril de 2024</u></font></a>.</div></p>
-
-<p><div align="justify">Parágrafo único. Havendo qualquer modificação legislativa, ou ainda, advindo qualquer situação legal que impacte na legalidade da presente Portaria Normativa, a mesma se aplica de imediato.</div></p>
-
-<br>
-<p><font color="black"><div align="right"> (Nome do(a) Diretor(a))</div></font></p>
-<p><font color="black"><div align="right"> (Diretor(a))</div></font></p>
-<br>
-
-<p><font color="red0000">Este texto não substitui o documento original, publicado no Portal de Documentos. Disponível em: <a href= (INCLUIR O LINK DO PORTAL DE DOCUMENTOS )target="_blank"><font color="blue"> (INCLUIR O LINK DO PORTAL DE DOCUMENTOS)</font></a>.
-`;
-            textArea.value += regulamentoText;
-            updatePreview();
         }
     </script>
 
